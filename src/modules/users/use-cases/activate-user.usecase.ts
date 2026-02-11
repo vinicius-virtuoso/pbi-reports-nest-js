@@ -1,0 +1,31 @@
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { type UserView } from '../entities/user.entity';
+import type { UsersRepository } from '../repositories/users.repository';
+import { USERS_REPOSITORY } from '../user.providers';
+
+@Injectable()
+export class ActivateUserUseCase {
+  constructor(
+    @Inject(USERS_REPOSITORY)
+    private usersRepository: UsersRepository,
+  ) {}
+
+  async execute(userId: string): Promise<UserView> {
+    const userFound = await this.usersRepository.findById(userId);
+
+    if (!userFound) throw new NotFoundException('User not found');
+
+    const userActivated = await this.usersRepository.activate(
+      userFound.activate(),
+    );
+
+    if (!userActivated) throw new BadRequestException('Error on activate user');
+
+    return userActivated.toView();
+  }
+}
