@@ -7,8 +7,8 @@ import { DeleteUserUseCase } from './use-cases/delete-user.usecase';
 import { FindAllUsersUseCase } from './use-cases/find-all-users.usecase';
 import { FindOneUserUseCase } from './use-cases/find-one-user.usecase';
 import { UpdateUserUseCase } from './use-cases/update-user.usecase';
-import { USERS_REPOSITORY } from './user.providers';
 import { UsersController } from './users.controller';
+import { USERS_REPOSITORY } from './users.providers';
 
 @Module({
   controllers: [UsersController],

@@ -68,9 +68,6 @@ export class User {
     );
   }
 
-  /* ---------- UPDATE RULES ---------- */
-
-  /** Atualização permitida para o próprio usuário */
   updateProfile(data: { name?: string; password?: string }): User {
     return new User(
       this.id,
@@ -85,7 +82,6 @@ export class User {
     );
   }
 
-  /** Atualização administrativa */
   updateByAdmin(data: {
     name?: string;
     email?: string;
@@ -105,7 +101,6 @@ export class User {
       this.lastAccess,
     );
   }
-  /* ---------- STATE CHANGES ---------- */
 
   deactivate(): User {
     return new User(

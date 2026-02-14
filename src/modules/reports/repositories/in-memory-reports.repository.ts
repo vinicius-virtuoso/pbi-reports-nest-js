@@ -8,9 +8,13 @@ export class InMemoryReportsRepository implements ReportsRepository {
   async save(report: Report): Promise<Report> {
     const reportPersisted = Report.fromPersistence({
       id: randomUUID(),
+      externalId: report.externalId,
       name: report.name,
       webUrl: report.webUrl,
       embedUrl: report.embedUrl,
+      isActive: report.isActive,
+      datasetId: report.datasetId,
+      workspaceId: report.workspaceId,
     });
     this.reports.push(reportPersisted);
 
@@ -29,5 +33,68 @@ export class InMemoryReportsRepository implements ReportsRepository {
     const reports = this.reports;
 
     return reports;
+  }
+
+  async findByExternalId(externalId: string): Promise<Report | null> {
+    const reportFound = this.reports.find(
+      (report) => report.externalId === externalId,
+    );
+
+    if (!reportFound) return null;
+
+    return reportFound;
+  }
+
+  async update(report: Report): Promise<Report | null> {
+    const index = this.reports.findIndex((r) => r.id === report.id);
+
+    if (index === -1) {
+      return null;
+    }
+
+    this.reports[index] = report;
+
+    return report;
+  }
+
+  async activate(report: Report): Promise<Report | null> {
+    const reportFoundIndex = this.reports.findIndex(
+      (reportIndex) => reportIndex.id === report.id,
+    );
+
+    if (reportFoundIndex === -1) {
+      return null;
+    }
+
+    this.reports[reportFoundIndex] = report;
+
+    return report;
+  }
+
+  async deactivate(report: Report): Promise<Report | null> {
+    const reportFoundIndex = this.reports.findIndex(
+      (reportIndex) => reportIndex.id === report.id,
+    );
+
+    if (reportFoundIndex === -1) {
+      return null;
+    }
+
+    this.reports[reportFoundIndex] = report;
+
+    return report;
+  }
+
+  async delete(reportId: string): Promise<boolean> {
+    const reportFound = this.reports.find((report) => report.id === reportId);
+
+    if (!reportFound) return false;
+
+    const reportsFiltered = this.reports.filter(
+      (report) => report.id !== reportId,
+    );
+    this.reports = reportsFiltered;
+
+    return true;
   }
 }

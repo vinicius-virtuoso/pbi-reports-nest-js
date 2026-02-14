@@ -1,11 +1,12 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import type { UsersRepository } from '../repositories/users.repository';
-import { USERS_REPOSITORY } from '../user.providers';
+import { USERS_REPOSITORY } from '../users.providers';
 
 type UserRole = 'ADMIN' | 'USER';
 
@@ -31,6 +32,10 @@ export class DeleteUserUseCase {
       throw new NotFoundException('User not found');
     }
 
-    await this.usersRepository.delete(input.targetUserId);
+    const isDeleted = await this.usersRepository.delete(input.targetUserId);
+
+    if (!isDeleted) {
+      throw new BadRequestException('Error on delete');
+    }
   }
 }

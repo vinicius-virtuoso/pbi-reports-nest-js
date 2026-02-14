@@ -4,4 +4,9 @@ export interface ReportsRepository {
   save(report: Report): Promise<Report>;
   findAll(): Promise<Report[]>;
   findById(reportId: string): Promise<Report | null>;
+  findByExternalId(externalId: string): Promise<Report | null>;
+  activate(report: Report): Promise<Report | null>;
+  deactivate(report: Report): Promise<Report | null>;
+  update(report: Report): Promise<Report | null>;
+  delete(reportId: string): Promise<boolean>;
 }

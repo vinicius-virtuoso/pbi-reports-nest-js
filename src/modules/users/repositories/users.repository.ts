@@ -8,5 +8,5 @@ export interface UsersRepository {
   activate(user: User): Promise<User | null>;
   deactivate(user: User): Promise<User | null>;
   update(user: User): Promise<User | null>;
-  delete(userId: string): Promise<void>;
+  delete(userId: string): Promise<boolean>;
 }

@@ -31,17 +31,17 @@ export class UsersController {
   ) {}
 
   @Post('add')
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto, @Req() req: any) {
     return this.createUserUseCase.execute(createUserDto);
   }
 
   @Get()
-  findAll() {
+  findAll(@Req() req: any) {
     return this.findAllUsersUseCase.execute();
   }
 
   @Get(':userId')
-  findOne(@Param('userId') userId: string) {
+  findOne(@Param('userId') userId: string, @Req() req: any) {
     return this.findOneUserUseCase.execute(userId);
   }
 
@@ -49,6 +49,7 @@ export class UsersController {
   update(
     @Body() updateUserDto: UpdateUserDto,
     @Param('userId') userId: string,
+    @Req() req: any,
   ) {
     return this.updateUserUseCase.execute({
       actorId: 'user-0001',
