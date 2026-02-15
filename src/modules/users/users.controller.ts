@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -32,17 +33,26 @@ export class UsersController {
 
   @Post('add')
   create(@Body() createUserDto: CreateUserDto, @Req() req: any) {
-    return this.createUserUseCase.execute(createUserDto);
+    return this.createUserUseCase.execute(createUserDto, {
+      id: 'admin-0001',
+      role: 'ADMIN',
+    });
   }
 
   @Get()
   findAll(@Req() req: any) {
-    return this.findAllUsersUseCase.execute();
+    return this.findAllUsersUseCase.execute({
+      id: 'admin-0001',
+      role: 'ADMIN',
+    });
   }
 
   @Get(':userId')
   findOne(@Param('userId') userId: string, @Req() req: any) {
-    return this.findOneUserUseCase.execute(userId);
+    return this.findOneUserUseCase.execute(userId, {
+      id: 'admin-0001',
+      role: 'ADMIN',
+    });
   }
 
   @Patch(':userId')
@@ -51,29 +61,34 @@ export class UsersController {
     @Param('userId') userId: string,
     @Req() req: any,
   ) {
-    return this.updateUserUseCase.execute({
-      actorId: 'user-0001',
-      targetUserId: userId,
-      data: updateUserDto,
+    return this.updateUserUseCase.execute(updateUserDto, userId, {
+      id: 'admin-0001',
+      role: 'ADMIN',
     });
   }
 
   @Patch('activate/:userId')
   activate(@Param('userId') userId: string, @Req() req: any) {
-    return this.activateUserUseCase.execute(userId);
+    return this.activateUserUseCase.execute(userId, {
+      id: 'admin-0001',
+      role: 'ADMIN',
+    });
   }
 
   @Patch('deactivate/:userId')
   deactivate(@Param('userId') userId: string, @Req() req: any) {
-    return this.deactivateUserUseCase.execute(userId);
+    return this.deactivateUserUseCase.execute(userId, {
+      id: 'admin-0001',
+      role: 'ADMIN',
+    });
   }
 
   @Delete(':userId')
+  @HttpCode(204)
   async delete(@Param('userId') userId: string) {
-    await this.deleteUserUseCase.execute({
-      actorId: 'admin-0001',
-      actorRole: 'ADMIN',
-      targetUserId: userId,
+    await this.deleteUserUseCase.execute(userId, {
+      id: 'admin-0001',
+      role: 'ADMIN',
     });
   }
 }

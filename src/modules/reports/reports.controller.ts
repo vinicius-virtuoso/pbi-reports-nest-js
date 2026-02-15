@@ -1,4 +1,4 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get, HttpCode, Patch, Req } from '@nestjs/common';
 import { GenericListaAllReportsUseCase } from './use-cases/generic-lista-all-reports.usecase';
 import { SyncReportsPowerBIUseCase } from './use-cases/sync-reports-for-power-bi.use-case';
 
@@ -9,7 +9,8 @@ export class ReportsController {
     private readonly genericListaAllReportsUseCase: GenericListaAllReportsUseCase,
   ) {}
 
-  @Get('sync')
+  @Patch('sync')
+  @HttpCode(204)
   create(@Req() req: any) {
     return this.syncReportsPowerBIUseCase.execute({
       id: 'admin-0001',

@@ -25,5 +25,6 @@ import { USERS_REPOSITORY } from './users.providers';
       useClass: InMemoryUsersRepository,
     },
   ],
+  exports: [USERS_REPOSITORY],
 })
 export class UsersModule {}

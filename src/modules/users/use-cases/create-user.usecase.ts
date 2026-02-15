@@ -1,9 +1,19 @@
-import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { hash } from 'bcrypt';
 import type { CreateUserDto } from '../dto/create-user.dto';
 import { User, type UserView } from '../entities/user.entity';
 import { USERS_REPOSITORY } from '../users.providers';
 import type { UsersRepository } from './../repositories/users.repository';
+
+export type LoggedUserProps = {
+  id: string;
+  role: 'USER' | 'ADMIN';
+};
 
 @Injectable()
 export class CreateUserUseCase {
@@ -12,7 +22,14 @@ export class CreateUserUseCase {
     private usersRepository: UsersRepository,
   ) {}
 
-  async execute(data: CreateUserDto): Promise<UserView> {
+  async execute(
+    data: CreateUserDto,
+    loggedUser: LoggedUserProps,
+  ): Promise<UserView> {
+    if (loggedUser.role !== 'ADMIN') {
+      throw new ForbiddenException();
+    }
+
     const userExisting = await this.usersRepository.findByEmail(data.email);
 
     if (userExisting) throw new ConflictException('Email already exists');

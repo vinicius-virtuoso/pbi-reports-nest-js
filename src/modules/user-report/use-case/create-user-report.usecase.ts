@@ -1,6 +1,14 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { REPORTS_REPOSITORY } from '../../reports/reports.providers';
 import type { ReportsRepository } from '../../reports/repositories/reports.repository';
+import type { UsersRepository } from '../../users/repositories/users.repository';
+import { USERS_REPOSITORY } from '../../users/users.providers';
+import type { UserReportView } from '../entities/user-report.entity';
 import type { UserReportRepository } from '../repositories/user-report.repository';
 import { USER_REPORT_REPOSITORY } from '../user-report.provider';
 
@@ -11,7 +19,7 @@ export type LoggedUserProps = {
 
 export type UserReportProps = {
   userId: string;
-  reportsIds: string[];
+  reportId: string;
 };
 
 @Injectable()
@@ -21,30 +29,46 @@ export class CreateUserReportUseCase {
     private readonly userReportRepository: UserReportRepository,
 
     @Inject(REPORTS_REPOSITORY)
-    private readonly reportRepository: ReportsRepository,
+    private readonly reportsRepository: ReportsRepository,
+
+    @Inject(USERS_REPOSITORY)
+    private readonly usersRepository: UsersRepository,
   ) {}
 
   async execute(
     data: UserReportProps,
     loggedUser: LoggedUserProps,
-  ): Promise<void> {
+  ): Promise<UserReportView> {
     if (loggedUser.role !== 'ADMIN') {
       throw new ForbiddenException();
     }
 
-    for (const reportId of data.reportsIds) {
-      const userReportFound = await this.userReportRepository.findByUserReport(
-        data.userId!,
-        reportId,
+    const reportFound = await this.reportsRepository.findById(data.reportId);
+
+    if (!reportFound) {
+      throw new NotFoundException('Report not found');
+    }
+
+    const userFound = await this.usersRepository.findById(data.userId);
+
+    if (!userFound) {
+      throw new NotFoundException('User not found');
+    }
+
+    const userReportFound = await this.userReportRepository.findByUserReport(
+      data.userId!,
+      data.reportId!,
+    );
+
+    if (!userReportFound) {
+      const userReportCreated = await this.userReportRepository.save(
+        data.reportId,
+        data.userId,
       );
 
-      if (!userReportFound) {
-        const reportFound = await this.reportRepository.findById(reportId);
-
-        if (reportFound) {
-          await this.userReportRepository.save(reportFound.id!, data.userId);
-        }
-      }
+      return userReportCreated.toView();
     }
+
+    return userReportFound.toView();
   }
 }

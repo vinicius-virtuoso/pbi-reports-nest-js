@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -8,6 +9,11 @@ import { type UserView } from '../entities/user.entity';
 import type { UsersRepository } from '../repositories/users.repository';
 import { USERS_REPOSITORY } from '../users.providers';
 
+export type LoggedUserProps = {
+  id: string;
+  role: 'USER' | 'ADMIN';
+};
+
 @Injectable()
 export class DeactivateUserUseCase {
   constructor(
@@ -15,7 +21,14 @@ export class DeactivateUserUseCase {
     private usersRepository: UsersRepository,
   ) {}
 
-  async execute(userId: string): Promise<UserView> {
+  async execute(
+    userId: string,
+    loggedUser: LoggedUserProps,
+  ): Promise<UserView> {
+    if (loggedUser.role !== 'ADMIN') {
+      throw new ForbiddenException();
+    }
+
     const userFound = await this.usersRepository.findById(userId);
 
     if (!userFound) throw new NotFoundException('User not found');

@@ -10,6 +10,11 @@ import type { User, UserView } from '../entities/user.entity';
 import type { UsersRepository } from '../repositories/users.repository';
 import { USERS_REPOSITORY } from '../users.providers';
 
+export type LoggedUserProps = {
+  id: string;
+  role: 'USER' | 'ADMIN';
+};
+
 @Injectable()
 export class UpdateUserUseCase {
   constructor(
@@ -17,21 +22,19 @@ export class UpdateUserUseCase {
     private readonly usersRepository: UsersRepository,
   ) {}
 
-  async execute(input: {
-    actorId: string;
-    targetUserId: string;
-    data: UpdateUserDto;
-  }): Promise<UserView> {
-    const actor = await this.usersRepository.findById(input.actorId);
+  async execute(
+    data: UpdateUserDto,
+    userId: string,
+    loggedUser: LoggedUserProps,
+  ): Promise<UserView> {
+    const actor = await this.usersRepository.findById(loggedUser.id);
     if (!actor) throw new NotFoundException('Actor not found');
 
-    const target = await this.usersRepository.findById(input.targetUserId);
+    const target = await this.usersRepository.findById(userId);
     if (!target) throw new NotFoundException('User not found');
 
-    if (input.data.email && input.data.email !== target.email) {
-      const emailOwner = await this.usersRepository.findByEmail(
-        input.data.email,
-      );
+    if (data.email && data.email !== target.email) {
+      const emailOwner = await this.usersRepository.findByEmail(data.email);
 
       if (emailOwner && emailOwner.id !== target.id) {
         throw new BadRequestException('Email already exists');
@@ -41,15 +44,15 @@ export class UpdateUserUseCase {
     let updatedUser: User;
 
     if (actor.role === 'ADMIN') {
-      updatedUser = target.updateByAdmin(input.data);
+      updatedUser = target.updateByAdmin(data);
     } else {
       if (actor.id !== target.id) {
         throw new ForbiddenException();
       }
 
       updatedUser = target.updateProfile({
-        name: input.data.name,
-        password: input.data.password,
+        name: data.name,
+        password: data.password,
       });
     }
 
