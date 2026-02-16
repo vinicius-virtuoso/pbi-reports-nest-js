@@ -51,12 +51,8 @@ export class PowerBiGateway implements PowerBiRepository {
     }));
   }
 
-  async generateEmbedToken(
-    token: string,
-    workspaceId: string,
-    reportId: string,
-  ) {
-    const url = `${process.env.POWER_BI_API_URL}/groups/${workspaceId}/reports/${reportId}/GenerateToken`;
+  async generateEmbedToken(token: string, reportId: string) {
+    const url = `${process.env.POWER_BI_API_URL}/${process.env.POWER_BI_WORKSPACE_ID}/reports/${reportId}/GenerateToken`;
 
     const { data } = await firstValueFrom(
       this.http.post<PowerBiEmbedTokenResponse>(
@@ -70,6 +66,9 @@ export class PowerBiGateway implements PowerBiRepository {
       ),
     );
 
-    return data;
+    return {
+      token: data.token,
+      expiration: data.expiration,
+    };
   }
 }

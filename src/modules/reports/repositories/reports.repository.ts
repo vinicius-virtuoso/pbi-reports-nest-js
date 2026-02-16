@@ -3,6 +3,7 @@ import type { Report } from '../entities/report.entity';
 export interface ReportsRepository {
   save(report: Report): Promise<Report>;
   findAll(): Promise<Report[]>;
+  findByIds(reportIds: string[]): Promise<Report[]>;
   findById(reportId: string): Promise<Report | null>;
   findByExternalId(externalId: string): Promise<Report | null>;
   activate(report: Report): Promise<Report | null>;

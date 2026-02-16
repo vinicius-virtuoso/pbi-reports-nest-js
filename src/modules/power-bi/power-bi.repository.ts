@@ -8,7 +8,6 @@ export interface PowerBiRepository {
   listReports(token: string): Promise<PowerBiReportResponse[]>;
   generateEmbedToken(
     accessToken: string,
-    workspaceId: string,
     reportId: string,
   ): Promise<PowerBiEmbedTokenResponse>;
 }

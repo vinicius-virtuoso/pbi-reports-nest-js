@@ -29,6 +29,16 @@ export class InMemoryReportsRepository implements ReportsRepository {
     return reportFound;
   }
 
+  async findByIds(ids: string[]): Promise<Report[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const idsSet = new Set(ids);
+
+    return this.reports.filter((report) => idsSet.has(report.id!));
+  }
+
   async findAll(): Promise<Report[]> {
     const reports = this.reports;
 

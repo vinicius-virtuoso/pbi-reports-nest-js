@@ -4,14 +4,19 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Report } from '../entities/report.entity';
-import type { PowerBiRepository } from '../gateways/power-bi/power-bi.repository';
+import type { PowerBiRepository } from '../../power-bi/power-bi.repository';
+import { Report, type ReportView } from '../entities/report.entity';
 import { POWER_BI_REPOSITORY, REPORTS_REPOSITORY } from '../reports.providers';
 import type { ReportsRepository } from '../repositories/reports.repository';
 
 export type LoggedUserProps = {
   id: string;
   role: 'USER' | 'ADMIN';
+};
+
+export type PaginatedResult = {
+  total: number;
+  reports: ReportView[];
 };
 
 @Injectable()
@@ -24,7 +29,7 @@ export class SyncReportsPowerBIUseCase {
     private readonly powerBiRepository: PowerBiRepository,
   ) {}
 
-  async execute(loggedUser: LoggedUserProps): Promise<void> {
+  async execute(loggedUser: LoggedUserProps): Promise<PaginatedResult> {
     if (loggedUser.role !== 'ADMIN') {
       throw new ForbiddenException();
     }
@@ -40,7 +45,7 @@ export class SyncReportsPowerBIUseCase {
     const powerBiReports =
       await this.powerBiRepository.listReports(authenticatedToken);
 
-    const dbReports = await this.reportsRepository.findAll();
+    let dbReports = await this.reportsRepository.findAll();
 
     const powerBiExternalIds = new Set(
       powerBiReports.map((report) => report.externalId),
@@ -76,5 +81,12 @@ export class SyncReportsPowerBIUseCase {
         await this.reportsRepository.deactivate(dbReport.deactivate());
       }
     }
+
+    dbReports = await this.reportsRepository.findAll();
+
+    return {
+      total: dbReports.length,
+      reports: dbReports.map((report) => report.toView()),
+    };
   }
 }

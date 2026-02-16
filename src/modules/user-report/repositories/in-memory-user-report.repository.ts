@@ -32,12 +32,12 @@ export class InMemoryUserReportRepository implements UserReportRepository {
     return userReportFound;
   }
 
-  async findByUser(userId: string): Promise<UserReport[] | null> {
+  async findByUser(userId: string): Promise<UserReport[]> {
     const userReportFound = this.userReports.filter(
       (userReport) => userReport.userId === userId,
     );
 
-    if (!userReportFound) return null;
+    if (!userReportFound) return [];
 
     return userReportFound;
   }
