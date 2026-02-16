@@ -48,7 +48,9 @@ export class FindAllReportsUseCase {
 
     return {
       total: reportAll.length,
-      reports: reportAll.map((report) => report.toView()),
+      reports: reportAll
+        .filter((report) => report.isActive)
+        .map((report) => report.toView()),
     };
   }
 }

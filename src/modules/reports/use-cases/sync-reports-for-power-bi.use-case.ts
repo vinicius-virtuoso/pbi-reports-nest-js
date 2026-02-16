@@ -70,10 +70,6 @@ export class SyncReportsPowerBIUseCase {
         await this.reportsRepository.save(report);
         continue;
       }
-
-      if (!reportFound.isActive) {
-        await this.reportsRepository.activate(reportFound.activate());
-      }
     }
 
     for (const dbReport of dbReports) {

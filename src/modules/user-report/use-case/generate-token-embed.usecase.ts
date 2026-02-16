@@ -1,20 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { PowerBiRepository } from '../../power-bi/power-bi.repository';
-import type { ReportView } from '../../reports/entities/report.entity';
+import type { PowerBiEmbedTokenResponse } from '../../power-bi/power-bi.types';
 import { POWER_BI_REPOSITORY } from '../../reports/reports.providers';
 import { ReportAccessService } from '../service/report-access/report-access.service';
-import { PowerBiEmbedTokenResponse } from './../../power-bi/power-bi.types';
 
 export type LoggedUserProps = {
   id: string;
   role: 'USER' | 'ADMIN';
 };
 
-export type FindOneUserReportUseCaseResponse = ReportView &
-  PowerBiEmbedTokenResponse;
-
 @Injectable()
-export class FindOneUserReportUseCase {
+export class GenerateTokenEmbedUseCase {
   constructor(
     private readonly reportAccessService: ReportAccessService,
 
@@ -25,7 +21,7 @@ export class FindOneUserReportUseCase {
   async execute(
     reportId: string,
     loggedUser: LoggedUserProps,
-  ): Promise<FindOneUserReportUseCaseResponse> {
+  ): Promise<PowerBiEmbedTokenResponse> {
     const report = await this.reportAccessService.validateAccess(
       reportId,
       loggedUser,
@@ -33,14 +29,9 @@ export class FindOneUserReportUseCase {
 
     const accessToken = await this.powerBiRepository.authenticate();
 
-    const embedConfig = await this.powerBiRepository.generateEmbedToken(
+    return this.powerBiRepository.generateEmbedToken(
       accessToken,
       report.externalId,
     );
-
-    return {
-      ...report,
-      ...embedConfig,
-    };
   }
 }

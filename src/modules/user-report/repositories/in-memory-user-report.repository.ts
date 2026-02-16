@@ -13,8 +13,6 @@ export class InMemoryUserReportRepository implements UserReportRepository {
     });
     this.userReports.push(userReportPersisted);
 
-    console.log(this.userReports);
-
     return userReportPersisted;
   }
 

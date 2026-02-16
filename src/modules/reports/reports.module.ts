@@ -5,6 +5,8 @@ import { PowerBiModule } from '../power-bi/power-bi.module';
 import { ReportsController } from './reports.controller';
 import { REPORTS_REPOSITORY } from './reports.providers';
 import { InMemoryReportsRepository } from './repositories/in-memory-reports.repository';
+import { ActivateReportUseCase } from './use-cases/activate-report.usecase';
+import { DeactivateReportUseCase } from './use-cases/deactivate-report.usecase';
 import { SyncReportsPowerBIUseCase } from './use-cases/sync-reports-for-power-bi.use-case';
 
 @Module({
@@ -18,6 +20,8 @@ import { SyncReportsPowerBIUseCase } from './use-cases/sync-reports-for-power-bi
   controllers: [ReportsController],
   providers: [
     SyncReportsPowerBIUseCase,
+    ActivateReportUseCase,
+    DeactivateReportUseCase,
     {
       provide: REPORTS_REPOSITORY,
       useClass: InMemoryReportsRepository,

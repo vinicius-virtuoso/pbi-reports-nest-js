@@ -14,6 +14,7 @@ import { CreateUserReportUseCase } from './use-case/create-user-report.usecase';
 import { DeleteUserReportUseCase } from './use-case/delete-user-report.usecase';
 import { FindAllReportsUseCase } from './use-case/find-all-reports.usecase';
 import { FindOneUserReportUseCase } from './use-case/find-one-user-report.usecase';
+import { GenerateTokenEmbedUseCase } from './use-case/generate-token-embed.usecase';
 
 @Controller('reports')
 export class UserReportController {
@@ -21,6 +22,7 @@ export class UserReportController {
     private readonly createUserReportUseCase: CreateUserReportUseCase,
     private readonly findAllReportsUseCase: FindAllReportsUseCase,
     private readonly findOneReportsUseCase: FindOneUserReportUseCase,
+    private readonly generateTokenEmbedUseCase: GenerateTokenEmbedUseCase,
     private readonly deleteUserReportUseCase: DeleteUserReportUseCase,
   ) {}
 
@@ -32,11 +34,19 @@ export class UserReportController {
     });
   }
 
+  @Get('report-token/:reportId')
+  generateToken(@Param('reportId') reportId: string, @Req() req: any) {
+    return this.generateTokenEmbedUseCase.execute(reportId, {
+      id: 'user-0001',
+      role: 'USER',
+    });
+  }
+
   @Get()
   findAll(@Req() req: any) {
     return this.findAllReportsUseCase.execute({
-      id: 'admin-0001',
-      role: 'ADMIN',
+      id: 'user-0001',
+      role: 'USER',
     });
   }
 
