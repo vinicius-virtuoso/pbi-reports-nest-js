@@ -16,9 +16,7 @@ import { USER_REPORT_REPOSITORY } from './user-report.provider';
   imports: [PowerBiModule, ReportsModule, UsersModule],
   controllers: [UserReportController],
   providers: [
-    // 👇 AQUI está a peça que faltava
     ReportAccessService,
-
     CreateUserReportUseCase,
     DeleteUserReportUseCase,
     FindAllReportsUseCase,
@@ -30,8 +28,6 @@ import { USER_REPORT_REPOSITORY } from './user-report.provider';
       useClass: InMemoryUserReportRepository,
     },
   ],
-  exports: [
-    USER_REPORT_REPOSITORY, // só o que é realmente compartilhado
-  ],
+  exports: [USER_REPORT_REPOSITORY],
 })
 export class UserReportModule {}

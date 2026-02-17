@@ -6,8 +6,8 @@ import {
   HttpCode,
   Param,
   Post,
-  Req,
 } from '@nestjs/common';
+import { UserRequest } from '../../decorators/user-request.decorator';
 import { CreateUserReportDto } from './dto/create-user-report.dto';
 import { DeleteUserReportDto } from './dto/delete-user-report.dto';
 import { CreateUserReportUseCase } from './use-case/create-user-report.usecase';
@@ -15,6 +15,11 @@ import { DeleteUserReportUseCase } from './use-case/delete-user-report.usecase';
 import { FindAllReportsUseCase } from './use-case/find-all-reports.usecase';
 import { FindOneUserReportUseCase } from './use-case/find-one-user-report.usecase';
 import { GenerateTokenEmbedUseCase } from './use-case/generate-token-embed.usecase';
+
+export type LoggedUserProps = {
+  id: string;
+  role: 'USER' | 'ADMIN';
+};
 
 @Controller('reports')
 export class UserReportController {
@@ -27,43 +32,46 @@ export class UserReportController {
   ) {}
 
   @Post('grant')
-  create(@Body() createUserReportDto: CreateUserReportDto, @Req() req: any) {
-    return this.createUserReportUseCase.execute(createUserReportDto, {
-      id: 'admin-0001',
-      role: 'ADMIN',
-    });
+  create(
+    @Body() createUserReportDto: CreateUserReportDto,
+    @UserRequest() loggedUser: LoggedUserProps,
+  ) {
+    return this.createUserReportUseCase.execute(
+      createUserReportDto,
+      loggedUser,
+    );
   }
 
   @Get('report-token/:reportId')
-  generateToken(@Param('reportId') reportId: string, @Req() req: any) {
-    return this.generateTokenEmbedUseCase.execute(reportId, {
-      id: 'user-0001',
-      role: 'USER',
-    });
+  generateToken(
+    @Param('reportId') reportId: string,
+    @UserRequest() loggedUser: LoggedUserProps,
+  ) {
+    return this.generateTokenEmbedUseCase.execute(reportId, loggedUser);
   }
 
   @Get()
-  findAll(@Req() req: any) {
-    return this.findAllReportsUseCase.execute({
-      id: 'user-0001',
-      role: 'USER',
-    });
+  findAll(@UserRequest() loggedUser: LoggedUserProps) {
+    return this.findAllReportsUseCase.execute(loggedUser);
   }
 
   @Get(':reportId')
-  findOne(@Param('reportId') reportId: string, @Req() req: any) {
-    return this.findOneReportsUseCase.execute(reportId, {
-      id: 'admin-0001',
-      role: 'ADMIN',
-    });
+  findOne(
+    @Param('reportId') reportId: string,
+    @UserRequest() loggedUser: LoggedUserProps,
+  ) {
+    return this.findOneReportsUseCase.execute(reportId, loggedUser);
   }
 
   @Delete('revoke')
   @HttpCode(204)
-  delete(@Body() deleteUserReportDto: DeleteUserReportDto, @Req() req: any) {
-    return this.deleteUserReportUseCase.execute(deleteUserReportDto, {
-      id: 'admin-0001',
-      role: 'ADMIN',
-    });
+  delete(
+    @Body() deleteUserReportDto: DeleteUserReportDto,
+    @UserRequest() loggedUser: LoggedUserProps,
+  ) {
+    return this.deleteUserReportUseCase.execute(
+      deleteUserReportDto,
+      loggedUser,
+    );
   }
 }

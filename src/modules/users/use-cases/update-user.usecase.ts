@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { hash } from 'bcrypt';
 import type { UpdateUserDto } from '../dto/update-user.dto';
 import type { User, UserView } from '../entities/user.entity';
 import type { UsersRepository } from '../repositories/users.repository';
@@ -43,8 +44,12 @@ export class UpdateUserUseCase {
 
     let updatedUser: User;
 
+    const passwordHashed = data.password
+      ? await hash(data.password, 11)
+      : undefined;
+
     if (actor.role === 'ADMIN') {
-      updatedUser = target.updateByAdmin(data);
+      updatedUser = target.updateByAdmin({ ...data, password: passwordHashed });
     } else {
       if (actor.id !== target.id) {
         throw new ForbiddenException();
@@ -52,7 +57,7 @@ export class UpdateUserUseCase {
 
       updatedUser = target.updateProfile({
         name: data.name,
-        password: data.password,
+        password: passwordHashed,
       });
     }
 

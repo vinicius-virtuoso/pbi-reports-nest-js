@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import 'dotenv/config';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -9,8 +10,8 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true, // 🔥 OBRIGATÓRIO
-      whitelist: true, // remove campos extras
+      transform: true,
+      whitelist: true,
       forbidNonWhitelisted: true,
     }),
   );

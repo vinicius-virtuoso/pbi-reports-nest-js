@@ -11,7 +11,7 @@ export class InMemoryUsersRepository implements UsersRepository {
       id: 'admin-0001',
       email: 'admin@test.com',
       name: 'Admin',
-      password: 'hashed-password',
+      password: '$2b$11$BZYNWg0CZIiEZvG9Qwxd3.ro6SNHw50RZPxp/fjkE1.FJ0Euq.uNS',
       role: 'ADMIN',
       isActive: true,
       createdAt: new Date(),
@@ -19,31 +19,7 @@ export class InMemoryUsersRepository implements UsersRepository {
       lastAccess: null,
     });
 
-    const userCommon = User.fromPersistence({
-      id: 'user-0001',
-      email: 'user@test.com',
-      name: 'User',
-      password: 'hashed-password',
-      role: 'USER',
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: null,
-      lastAccess: null,
-    });
-
-    const userCommon2 = User.fromPersistence({
-      id: 'user-0002',
-      email: 'user2@test.com',
-      name: 'User',
-      password: 'hashed-password',
-      role: 'USER',
-      isActive: false,
-      createdAt: new Date(),
-      updatedAt: null,
-      lastAccess: null,
-    });
-
-    this.users.push(admin, userCommon, userCommon2);
+    this.users.push(admin);
   }
 
   async save(user: User): Promise<User> {

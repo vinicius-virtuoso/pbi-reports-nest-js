@@ -7,8 +7,8 @@ import {
   Param,
   Patch,
   Post,
-  Req,
 } from '@nestjs/common';
+import { UserRequest } from '../../decorators/user-request.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ActivateUserUseCase } from './use-cases/activate-user.usecase';
@@ -18,6 +18,11 @@ import { DeleteUserUseCase } from './use-cases/delete-user.usecase';
 import { FindAllUsersUseCase } from './use-cases/find-all-users.usecase';
 import { FindOneUserUseCase } from './use-cases/find-one-user.usecase';
 import { UpdateUserUseCase } from './use-cases/update-user.usecase';
+
+export type LoggedUserProps = {
+  id: string;
+  role: 'USER' | 'ADMIN';
+};
 
 @Controller('users')
 export class UsersController {
@@ -32,63 +37,57 @@ export class UsersController {
   ) {}
 
   @Post('add')
-  create(@Body() createUserDto: CreateUserDto, @Req() req: any) {
-    return this.createUserUseCase.execute(createUserDto, {
-      id: 'admin-0001',
-      role: 'ADMIN',
-    });
+  create(
+    @Body() createUserDto: CreateUserDto,
+    @UserRequest() loggedUser: LoggedUserProps,
+  ) {
+    return this.createUserUseCase.execute(createUserDto, loggedUser);
   }
 
   @Get()
-  findAll(@Req() req: any) {
-    return this.findAllUsersUseCase.execute({
-      id: 'admin-0001',
-      role: 'ADMIN',
-    });
+  findAll(@UserRequest() loggedUser: LoggedUserProps) {
+    return this.findAllUsersUseCase.execute(loggedUser);
   }
 
   @Get(':userId')
-  findOne(@Param('userId') userId: string, @Req() req: any) {
-    return this.findOneUserUseCase.execute(userId, {
-      id: 'admin-0001',
-      role: 'ADMIN',
-    });
+  findOne(
+    @Param('userId') userId: string,
+    @UserRequest() loggedUser: LoggedUserProps,
+  ) {
+    return this.findOneUserUseCase.execute(userId, loggedUser);
   }
 
   @Patch(':userId')
   update(
     @Body() updateUserDto: UpdateUserDto,
     @Param('userId') userId: string,
-    @Req() req: any,
+    @UserRequest() loggedUser: LoggedUserProps,
   ) {
-    return this.updateUserUseCase.execute(updateUserDto, userId, {
-      id: 'admin-0001',
-      role: 'ADMIN',
-    });
+    return this.updateUserUseCase.execute(updateUserDto, userId, loggedUser);
   }
 
   @Patch('activate/:userId')
-  activate(@Param('userId') userId: string, @Req() req: any) {
-    return this.activateUserUseCase.execute(userId, {
-      id: 'admin-0001',
-      role: 'ADMIN',
-    });
+  activate(
+    @Param('userId') userId: string,
+    @UserRequest() loggedUser: LoggedUserProps,
+  ) {
+    return this.activateUserUseCase.execute(userId, loggedUser);
   }
 
   @Patch('deactivate/:userId')
-  deactivate(@Param('userId') userId: string, @Req() req: any) {
-    return this.deactivateUserUseCase.execute(userId, {
-      id: 'admin-0001',
-      role: 'ADMIN',
-    });
+  deactivate(
+    @Param('userId') userId: string,
+    @UserRequest() loggedUser: LoggedUserProps,
+  ) {
+    return this.deactivateUserUseCase.execute(userId, loggedUser);
   }
 
   @Delete(':userId')
   @HttpCode(204)
-  async delete(@Param('userId') userId: string) {
-    await this.deleteUserUseCase.execute(userId, {
-      id: 'admin-0001',
-      role: 'ADMIN',
-    });
+  async delete(
+    @Param('userId') userId: string,
+    @UserRequest() loggedUser: LoggedUserProps,
+  ) {
+    await this.deleteUserUseCase.execute(userId, loggedUser);
   }
 }
