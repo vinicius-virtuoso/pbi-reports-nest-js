@@ -41,6 +41,7 @@ export class CreateUserUseCase {
       email: data.email,
       password: passwordHashed,
       role: data.role,
+      lastAccess: null,
     });
 
     const user = await this.usersRepository.save(userCreated);

@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { UserLifecycleJob } from './jobs/user-lifecycle.job';
 import { InMemoryUsersRepository } from './repositories/in-memory-users.repository';
+import { AdminSeed } from './seeds/admin.seed';
 import { ActivateUserUseCase } from './use-cases/activate-user.usecase';
 import { CreateUserUseCase } from './use-cases/create-user.usecase';
 import { DeactivateUserUseCase } from './use-cases/deactivate-user.usecase';
@@ -13,6 +15,8 @@ import { USERS_REPOSITORY } from './users.providers';
 @Module({
   controllers: [UsersController],
   providers: [
+    AdminSeed,
+    UserLifecycleJob,
     CreateUserUseCase,
     FindAllUsersUseCase,
     FindOneUserUseCase,
