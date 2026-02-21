@@ -12,7 +12,7 @@ export class UserLifecycleJob {
     private readonly usersRepository: UsersRepository,
   ) {}
 
-  @Cron('0 2 */3 * *')
+  @Cron('* * 3 */3 * *') // Vai rodar a cada 3 dias, as 03 da madrugada
   async handle() {
     this.logger.log('Iniciando limpeza de usuários inativos...');
 

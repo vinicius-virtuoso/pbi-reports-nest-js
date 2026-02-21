@@ -19,7 +19,7 @@ export class AdminSeed implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
-    if (process.env.NODE_ENV !== 'production') return;
+    // if (process.env.NODE_ENV !== 'production') return;
 
     const email = process.env.ADMIN_EMAIL;
     const password = process.env.ADMIN_PASSWORD;
