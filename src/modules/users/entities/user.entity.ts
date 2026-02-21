@@ -5,6 +5,7 @@ type UserCreate = {
   name: string;
   password: string;
   role: UserRole;
+  lastAccess: Date | null;
 };
 
 export type UserView = {
@@ -13,9 +14,9 @@ export type UserView = {
   name: string;
   role: UserRole;
   isActive: boolean;
+  lastAccess: Date | null;
   createdAt?: Date;
   updatedAt?: Date | null;
-  lastAccess?: Date | null;
 };
 
 export class User {
@@ -26,9 +27,9 @@ export class User {
     readonly password: string,
     readonly role: UserRole,
     readonly isActive: boolean,
+    readonly lastAccess: Date | null,
     readonly createdAt?: Date,
     readonly updatedAt?: Date | null,
-    readonly lastAccess?: Date | null,
   ) {}
 
   /* ---------- FACTORIES ---------- */
@@ -41,6 +42,7 @@ export class User {
       data.password,
       data.role,
       true,
+      null,
     );
   }
 
@@ -51,9 +53,9 @@ export class User {
     password: string;
     role: UserRole;
     isActive: boolean;
+    lastAccess: Date | null;
     createdAt: Date;
     updatedAt: Date | null;
-    lastAccess: Date | null;
   }): User {
     return new User(
       data.id,
@@ -62,9 +64,9 @@ export class User {
       data.password,
       data.role,
       data.isActive,
+      data.lastAccess,
       data.createdAt,
       data.updatedAt,
-      data.lastAccess,
     );
   }
 
@@ -76,9 +78,9 @@ export class User {
       data.password ?? this.password,
       this.role,
       this.isActive,
+      this.lastAccess,
       this.createdAt,
       new Date(),
-      this.lastAccess,
     );
   }
 
@@ -96,9 +98,9 @@ export class User {
       data.password ?? this.password,
       data.role ?? this.role,
       data.isActive ?? this.isActive,
+      this.lastAccess,
       this.createdAt,
       new Date(),
-      this.lastAccess,
     );
   }
 
@@ -110,9 +112,9 @@ export class User {
       this.password,
       this.role,
       false,
+      this.lastAccess,
       this.createdAt,
       new Date(),
-      this.lastAccess,
     );
   }
 
@@ -124,9 +126,9 @@ export class User {
       this.password,
       this.role,
       true,
+      this.lastAccess,
       this.createdAt,
       new Date(),
-      this.lastAccess,
     );
   }
 
@@ -138,9 +140,9 @@ export class User {
       this.password,
       this.role,
       this.isActive,
+      date,
       this.createdAt,
       this.updatedAt,
-      date,
     );
   }
 
@@ -151,9 +153,9 @@ export class User {
       name: this.name,
       role: this.role,
       isActive: this.isActive,
+      lastAccess: this.lastAccess,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
-      lastAccess: this.lastAccess,
     };
   }
 }

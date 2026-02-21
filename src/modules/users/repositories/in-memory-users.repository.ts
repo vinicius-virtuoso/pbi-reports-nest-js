@@ -5,23 +5,6 @@ import type { UsersRepository } from './users.repository';
 export class InMemoryUsersRepository implements UsersRepository {
   private users: User[] = [];
 
-  constructor() {
-    // 🔥 seed de usuário admin fake
-    const admin = User.fromPersistence({
-      id: 'admin-0001',
-      email: 'admin@test.com',
-      name: 'Admin',
-      password: '$2b$11$BZYNWg0CZIiEZvG9Qwxd3.ro6SNHw50RZPxp/fjkE1.FJ0Euq.uNS',
-      role: 'ADMIN',
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: null,
-      lastAccess: null,
-    });
-
-    this.users.push(admin);
-  }
-
   async save(user: User): Promise<User> {
     const userPersisted = User.fromPersistence({
       id: randomUUID(),
@@ -110,5 +93,12 @@ export class InMemoryUsersRepository implements UsersRepository {
     this.users = usersFiltered;
 
     return true;
+  }
+
+  async findUsersInactiveSince(date: Date): Promise<User[]> {
+    return this.users.filter(
+      (user) =>
+        user.lastAccess && user.lastAccess < date && user.role === 'USER',
+    );
   }
 }

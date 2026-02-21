@@ -9,4 +9,5 @@ export interface UsersRepository {
   deactivate(user: User): Promise<User | null>;
   update(user: User): Promise<User | null>;
   delete(userId: string): Promise<boolean>;
+  findUsersInactiveSince(date: Date): Promise<User[]>;
 }
